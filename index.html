@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>Mapa electoral de España</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">Simulación de circunscripciones provinciales</p>
+          <h1>Mapa de España: ¿qué pasa si la izquierda va en una lista común?</h1>
+          <p class="intro">
+            Este prototipo compara dos escenarios por provincia: uno sin lista común de izquierda y otro con lista común.
+            La idea es mostrar cómo la concentración del voto puede traducirse en más escaños bajo el sistema D’Hondt, usando una base de referencia más cercana a los resultados del 23J.
+          </p>
+        </div>
+        <div class="hero-card">
+          <div class="hero-stat">
+            <span id="total-without">0</span>
+            <small>escaños de la izquierda sin lista común</small>
+          </div>
+          <div class="hero-stat alt">
+            <span id="total-with">0</span>
+            <small>escaños de la izquierda con lista común</small>
+          </div>
+          <div class="hero-stat gain">
+            <span id="total-gain">0</span>
+            <small>ganancia total</small>
+          </div>
+        </div>
+      </header>
+
+      <section class="panel-grid">
+        <div class="map-card">
+          <div class="card-head">
+            <h2>Provincias</h2>
+            <p>Haz clic en una provincia para ver la comparación entre los dos escenarios.</p>
+          </div>
+          <svg id="map" viewBox="0 0 1000 900" role="img" aria-label="Mapa estilizado de España con provincias"></svg>
+          <div class="legend">
+            <span><i class="dot gain"></i> Gana más con lista común</span>
+            <span><i class="dot loss"></i> Pierde escaños</span>
+            <span><i class="dot neutral"></i> Sin cambio</span>
+          </div>
+        </div>
+
+        <aside class="detail-card" id="detail-card">
+          <div class="card-head">
+            <div class="card-title-row"><h2>Comparación provincial</h2><button id="share-scenario" class="share-button" type="button">Compartir</button></div>
+            <p>Escenario activo de la circunscripción seleccionada.</p>
+            <span id="share-status" class="share-status" role="status"></span>
+          </div>
+          <div id="province-detail" class="province-detail">
+            <h3>Selecciona una provincia</h3>
+            <p>El mapa muestra una simulación conceptual del efecto de concentrar el voto de izquierda.</p>
+          </div>
+        </aside>
+      </section>
+
+      <section class="strategy-card" aria-labelledby="strategy-title">
+        <div class="card-head">
+          <h2 id="strategy-title">Provincias estratégicas</h2>
+          <p>Ordenadas por la ganancia del escenario editable y, después, por la cercanía al siguiente escaño.</p>
+        </div>
+        <div id="strategy-ranking" class="strategy-ranking"></div>
+      </section>
+
+      <details class="methodology-card">
+        <summary>Fuente y metodología</summary>
+        <div>
+          <p>Datos del Congreso del 23J de 2023, según el <a href="https://www.boe.es/diario_boe/xml.php?id=BOE-A-2023-18907" target="_blank" rel="noreferrer">BOE-A-2023-18907</a>.</p>
+          <p>Se aplica el método D’Hondt por circunscripción: se generan los cocientes voto/1, voto/2, voto/3… y se asignan los escaños a los cocientes más altos. Se aplica el umbral provincial del 3% de votos válidos.</p>
+          <p>“Otros” representa votos de candidaturas que no se modelan individualmente y no compite como una lista única. La simulación editable sirve para explorar escenarios, no es una predicción electoral.</p>
+        </div>
+      </details>
+    </div>
+
+    <script src="datos_oficiales_boe.js?v=20260819-01"></script>
+    <script src="app.js?v=20260819-01"></script>
+  </body>
+</html>
