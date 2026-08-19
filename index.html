@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!-- Simulador electoral provincial - MIT License. (c) 2026 Guillermo Cano Soto -->
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
@@ -17,13 +18,14 @@
           <h1>Mapa de España: ¿qué pasa si la izquierda va en una lista común?</h1>
           <p class="intro">
             Este prototipo compara dos escenarios por provincia: uno sin lista común de izquierda y otro con lista común.
-            La idea es mostrar cómo la concentración del voto puede traducirse en más escaños bajo el sistema D’Hondt, usando una base de referencia más cercana a los resultados del 23J.
+            La idea es mostrar cómo la concentración del voto puede traducirse en más escaños bajo el sistema D’Hondt, usando una base de referencia cercana a los resultados del 23J.
+            En cada provincia puedes <strong>modificar el escenario</strong>: añadir partidos, ajustar sus votos y marcar cuáles se suman a la lista común de izquierdas (el resto queda fuera). Así puedes modelar las próximas elecciones con las candidaturas que quieras.
           </p>
         </div>
         <div class="hero-card">
           <div class="hero-stat">
             <span id="total-without">0</span>
-            <small>escaños de la izquierda sin lista común</small>
+            <small>escaños de la izquierda si no se unen</small>
           </div>
           <div class="hero-stat alt">
             <span id="total-with">0</span>
@@ -34,27 +36,54 @@
             <small>ganancia total</small>
           </div>
         </div>
+        <p class="hero-verdict" id="hero-verdict"></p>
+        <div class="quick-scenarios">
+          <span class="control-label">Escenarios rápidos:</span>
+          <button type="button" class="hemicycle-btn qs-btn active" data-preset="baseline">23J oficial</button>
+          <button type="button" class="hemicycle-btn qs-btn" data-preset="psoe-solo">Solo PSOE</button>
+          <button type="button" class="hemicycle-btn qs-btn" data-preset="psoe-sumar">PSOE + Sumar</button>
+          <button type="button" class="hemicycle-btn qs-btn" data-preset="sin-psoe">Izquierda sin PSOE</button>
+          <button type="button" class="hemicycle-btn qs-btn" data-preset="toda-izquierda">Toda la izquierda</button>
+        </div>
       </header>
 
       <section class="panel-grid">
         <div class="map-card">
-          <div class="card-head">
-            <h2>Provincias</h2>
-            <p>Haz clic en una provincia para ver la comparación entre los dos escenarios.</p>
+          <div class="card-head map-head">
+            <div>
+              <h2>Provincias</h2>
+              <p>Haz clic en una provincia para ver la comparación entre los dos escenarios.</p>
+            </div>
           </div>
           <svg id="map" viewBox="0 0 1000 900" role="img" aria-label="Mapa estilizado de España con provincias"></svg>
-          <div class="legend">
-            <span><i class="dot gain"></i> Gana más con lista común</span>
-            <span><i class="dot loss"></i> Pierde escaños</span>
-            <span><i class="dot neutral"></i> Sin cambio</span>
+          <div class="map-controls">
+            <div class="legend" id="map-legend">
+              <span><i class="dot left-win"></i> Gana la izquierda</span>
+              <span><i class="dot right-win"></i> Gana el resto</span>
+              <span><i class="dot neutral"></i> Empate</span>
+            </div>
+            <div class="map-toggle-row">
+              <span class="control-label">Escenario:</span>
+              <div class="hemicycle-toggle" role="group" aria-label="Escenario del mapa">
+                <button type="button" class="hemicycle-btn map-btn active" data-map-mode="with">Con lista</button>
+                <button type="button" class="hemicycle-btn map-btn" data-map-mode="without">Sin lista</button>
+              </div>
+            </div>
+          </div>
+          <div id="map-tooltip" class="hidden" role="tooltip"></div>
+          <div class="map-editor">
+            <div class="map-editor-head">
+              <h3 id="editor-title">Simulador provincial</h3>
+              <p id="editor-subtitle">Selecciona una provincia en el mapa para editar su escenario.</p>
+            </div>
+            <div id="scenario-editor"></div>
           </div>
         </div>
 
         <aside class="detail-card" id="detail-card">
           <div class="card-head">
-            <div class="card-title-row"><h2>Comparación provincial</h2><button id="share-scenario" class="share-button" type="button">Compartir</button></div>
+            <h2>Comparación provincial</h2>
             <p>Escenario activo de la circunscripción seleccionada.</p>
-            <span id="share-status" class="share-status" role="status"></span>
           </div>
           <div id="province-detail" class="province-detail">
             <h3>Selecciona una provincia</h3>
@@ -63,25 +92,64 @@
         </aside>
       </section>
 
-      <section class="strategy-card" aria-labelledby="strategy-title">
-        <div class="card-head">
-          <h2 id="strategy-title">Provincias estratégicas</h2>
-          <p>Ordenadas por la ganancia del escenario editable y, después, por la cercanía al siguiente escaño.</p>
+      <section class="hemicycle-card" aria-labelledby="hemicycle-title">
+        <div class="card-head hemicycle-head">
+          <div>
+            <h2 id="hemicycle-title">Hemiciclo del Congreso</h2>
+            <p>Composición nacional de escaños según el escenario editable de cada provincia.</p>
+          </div>
+          <div class="hemicycle-toggle" role="group" aria-label="Escenario del hemiciclo">
+            <span class="control-label">Escenario:</span>
+            <button type="button" class="hemicycle-btn" data-hemicycle-mode="with">Con lista</button>
+            <button type="button" class="hemicycle-btn" data-hemicycle-mode="without">Sin lista</button>
+          </div>
         </div>
-        <div id="strategy-ranking" class="strategy-ranking"></div>
+        <p class="panel-copy" id="hemicycle-caption">Con lista común de izquierdas</p>
+        <svg id="hemicycle-svg" viewBox="0 0 100 56" role="img" aria-label="Hemiciclo del Congreso"></svg>
+        <div id="hemicycle-legend" class="hemicycle-legend"></div>
       </section>
+
+      <details class="methodology-card">
+        <summary>Guía rápida: qué puedes hacer</summary>
+        <div>
+          <ul class="guide-list">
+            <li><strong>Escenarios rápidos</strong> (arriba, junto al total nacional): aplica coaliciones predefinidas en todas las provincias — 23J oficial, Solo PSOE, PSOE + Sumar, Izquierda sin PSOE o Toda la izquierda.</li>
+            <li><strong>Mapa</strong>: haz clic en una provincia para ver su comparación. Alterna entre «Con lista» y «Sin lista». Las provincias rayadas son las que cambian de escaños al unirse la lista común.</li>
+            <li><strong>Simulador provincial</strong>: ajusta los votos de cada partido con el deslizador o el campo numérico, añade o elimina candidaturas y cambia su nombre.</li>
+            <li><strong>Etiqueta Izq./Der.</strong>: indica la ideología de cada partido. Haz clic en ella para cambiarla; al pasar a «Der.» el partido sale de la lista común.</li>
+            <li><strong>∪ Unidos</strong>: marca qué partidos se presentan como una sola lista común. Con dos o más marcados aparecen unificados en una candidatura.</li>
+            <li><strong>Comparación provincial</strong>: cada panel se tiñe del color del bloque ganador (rojo izquierda, azul resto). El aviso «¡Cambia el ganador!» señala cuándo la lista común invierte el resultado.</li>
+            <li><strong>Hemiciclo</strong>: composición nacional con el botón Con lista / Sin lista. La línea vertical marca la mayoría absoluta (176 escaños).</li>
+          </ul>
+          <p>Es una simulación conceptual para explorar escenarios, no una predicción electoral.</p>
+        </div>
+      </details>
+
+      <details class="methodology-card">
+        <summary>Contacto</summary>
+        <div>
+          <p>¿Preguntas, sugerencias o quieres usar este proyecto en tu medio? Envíame un mensaje:</p>
+          <form class="contact-form" action="https://api.web3forms.com/submit" method="POST">
+            <input type="hidden" name="access_key" value="545636a4-dfc0-4d99-9033-9fd85689c242" />
+            <label>Nombre <input type="text" name="name" required /></label>
+            <label>Tu email <input type="email" name="email" required /></label>
+            <label>Mensaje <textarea name="message" rows="4" required></textarea></label>
+            <button type="submit">Enviar</button>
+          </form>
+        </div>
+      </details>
 
       <details class="methodology-card">
         <summary>Fuente y metodología</summary>
         <div>
           <p>Datos del Congreso del 23J de 2023, según el <a href="https://www.boe.es/diario_boe/xml.php?id=BOE-A-2023-18907" target="_blank" rel="noreferrer">BOE-A-2023-18907</a>.</p>
           <p>Se aplica el método D’Hondt por circunscripción: se generan los cocientes voto/1, voto/2, voto/3… y se asignan los escaños a los cocientes más altos. Se aplica el umbral provincial del 3% de votos válidos.</p>
-          <p>“Otros” representa votos de candidaturas que no se modelan individualmente y no compite como una lista única. La simulación editable sirve para explorar escenarios, no es una predicción electoral.</p>
+          <p>“Otros” representa votos de candidaturas que no se modelan individualmente y no compite como una lista única. El editor de cada provincia te permite añadir partidos, cambiar sus votos y decidir con una casilla si se unen a la lista común de izquierdas. La simulación editable sirve para explorar escenarios, no es una predicción electoral.</p>
         </div>
       </details>
     </div>
 
     <script src="datos_oficiales_boe.js?v=20260819-01"></script>
-    <script src="app.js?v=20260819-01"></script>
+    <script src="app.js?v=20260819-33"></script>
   </body>
 </html>

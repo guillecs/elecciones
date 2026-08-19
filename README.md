@@ -8,7 +8,7 @@ La aplicacion permite:
 - Editar porcentajes de las candidaturas del escenario unificado sin superar el 100%.
 - Consultar los cocientes D'Hondt y la distancia aproximada al siguiente escano.
 - Ver un orden orientativo de puestos internos para los socios de la lista.
-- Compartir un escenario mediante una URL.
+- Probar escenarios rapidos nacionales y simular coaliciones en cada provincia.
 
 ## Datos y metodologia
 
@@ -26,18 +26,27 @@ python3 -m http.server 8000
 
 Abre <http://localhost:8000>.
 
-## Publicar en GitHub Pages
+## Publicar en Firebase Hosting
 
-El workflow de `.github/workflows/pages.yml` publica automaticamente la raiz del repositorio en GitHub Pages cada vez que se actualiza `main`.
+La aplicacion se publica en Firebase Hosting con:
 
-En GitHub, entra en **Settings > Pages**, selecciona **GitHub Actions** como fuente y ejecuta el workflow `Deploy static site to GitHub Pages` o haz push a `main`.
+```sh
+firebase deploy --only hosting
+```
 
-El sitio quedara disponible normalmente en:
+El sitio esta disponible en:
 
 ```text
-https://guillecs.github.io/elecciones/
+https://izquierda-unificada.web.app
 ```
 
 ## Licencia
 
-Este proyecto se distribuye bajo la [GNU GPL v2](LICENSE).
+MIT License. Copyright (c) 2026 Guillermo Cano Soto. Consulta [LICENSE](LICENSE) para los terminos completos.
+
+Para preguntas, sugerencias o colaboraciones, usa el formulario de contacto de la web.
+
+## Atribuciones de terceros
+
+- Los shapes del mapa proceden de [spain-map-repo](https://github.com/...) (c) 2012 Javier Toledo, bajo licencia **MIT** (ver `spain-map-repo/LICENSE`).
+- Los datos electorales proceden del [BOE-A-2023-18907](https://www.boe.es/diario_boe/xml.php?id=BOE-A-2023-18907) (datos publicos oficiales).
